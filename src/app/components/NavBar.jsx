@@ -16,6 +16,7 @@ export default function NavBar() {
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "Tutors", href: "/tutors" },
+    { label: "Add Tutor", href: "/add-tutor" },
   ];
 
   return (

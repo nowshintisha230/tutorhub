@@ -1,9 +1,48 @@
 "use client";
 
-import React from "react";
+import { authClient } from "@/lib/auth-client";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 const BookingModal = ({ isOpen, onOpenChange, tutor }) => {
+  
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+
+  const [studentName, setStudentName] = useState("");
+  const [phone, setPhone] = useState("");
+
   if (!isOpen) return null;
+
+  const handleBooking = async () => {
+    const bookingData = {
+      studentName,
+      phone,
+      studentEmail: user?.email,
+      tutorId: tutor?._id,
+      tutorName: tutor?.tutorName,
+      bookingStatus: "Pending",
+    };
+
+    try {
+      const res = await fetch("http://localhost:5000/bookings", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
+
+      const data = await res.json();
+
+      if (data.insertedId) {
+        toast.success("Booking confirmed successfully! 🎉");
+        onOpenChange(false);
+      } else {
+        toast.error("Something went wrong. Try again.");
+      }
+    } catch (error) {
+      toast.error("Server error. Please try again later.");
+    }
+  };
 
   return (
     <div
@@ -23,6 +62,8 @@ const BookingModal = ({ isOpen, onOpenChange, tutor }) => {
             <input
               type="text"
               placeholder="Enter your name"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -32,6 +73,8 @@ const BookingModal = ({ isOpen, onOpenChange, tutor }) => {
             <input
               type="text"
               placeholder="017XXXXXXXX"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -60,7 +103,7 @@ const BookingModal = ({ isOpen, onOpenChange, tutor }) => {
             <label className="text-sm text-gray-600 mb-1 block">Student Email</label>
             <input
               type="text"
-              value="student@gmail.com"
+              value={user?.email || ""}
               readOnly
               className="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
             />
@@ -85,7 +128,10 @@ const BookingModal = ({ isOpen, onOpenChange, tutor }) => {
           >
             Cancel
           </button>
-          <button className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 text-sm font-medium transition">
+          <button
+            onClick={handleBooking}
+            className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 text-sm font-medium transition"
+          >
             Confirm Booking
           </button>
         </div>

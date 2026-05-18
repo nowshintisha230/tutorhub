@@ -4,16 +4,12 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
-import { Avatar } from "@heroui/react";
-import { useState } from "react";
 
 const SignUpPage = () => {
   const router = useRouter();
-  const [photoURL, setPhotoURL] = useState("");
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.currentTarget);
     const user = Object.fromEntries(formData.entries());
 
@@ -21,7 +17,7 @@ const SignUpPage = () => {
       email: user.email,
       password: user.password,
       name: user.name,
-      image: photoURL || "",
+      image: user.photoURL,
     });
 
     if (data) {
@@ -43,16 +39,19 @@ const SignUpPage = () => {
   };
 
   const handleGoogleSignin = async () => {
+    const loadingToast = toast.loading("Redirecting to Google...");
+
     try {
-      const { error } = await authClient.signIn.social({
+      const result = await authClient.signIn.social({
         provider: "google",
       });
 
-      if (error) {
-        toast.error(error.message || "Google sign-in failed", {
+      toast.dismiss(loadingToast);
+
+      if (result?.error) {
+        toast.error("Google login failed. Try again.", {
           style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
           iconTheme: { primary: "#fff", secondary: "#dc2626" },
-          duration: 4000,
         });
         return;
       }
@@ -62,13 +61,12 @@ const SignUpPage = () => {
         iconTheme: { primary: "#fff", secondary: "#16a34a" },
         duration: 3000,
       });
+    } catch (error) {
+      toast.dismiss(loadingToast);
 
-      setTimeout(() => router.push("/"), 1500);
-    } catch (err) {
-      toast.error(err.message || "Something went wrong", {
+      toast.error(error?.message || "Google login failed.", {
         style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
         iconTheme: { primary: "#fff", secondary: "#dc2626" },
-        duration: 4000,
       });
     }
   };
@@ -76,23 +74,13 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-3">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-5">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Register Now
         </h2>
 
-        {/* Avatar Preview */}
-        <div className="flex flex-col items-center mb-6">
-          <Avatar src={photoURL} name="User" size="lg" className="mb-2" />
-          <p className="text-xs text-gray-400">
-            Avatar preview (Google or URL based)
-          </p>
-        </div>
-
         <form onSubmit={onSubmit} className="space-y-5">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Name
-            </label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Name</label>
             <input
               type="text"
               name="name"
@@ -103,9 +91,7 @@ const SignUpPage = () => {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Email
-            </label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
               name="email"
@@ -116,22 +102,18 @@ const SignUpPage = () => {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Avatar URL (optional)
-            </label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Photo URL</label>
             <input
               type="text"
-              value={photoURL}
-              onChange={(e) => setPhotoURL(e.target.value)}
-              placeholder="Paste image URL"
+              name="photoURL"
+              placeholder="Enter photo URL"
+              required
               className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
               name="password"
@@ -159,10 +141,10 @@ const SignUpPage = () => {
 
         <button
           onClick={handleGoogleSignin}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 px-4 hover:bg-gray-50"
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 px-4 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 group"
         >
           <FcGoogle size={22} />
-          <span className="text-sm font-semibold text-gray-700">
+          <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">
             Sign up with Google
           </span>
         </button>

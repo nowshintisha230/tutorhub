@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { FcGoogle } from "react-icons/fc";
 
 const LogInPage = () => {
   const router = useRouter();
@@ -19,15 +20,8 @@ const LogInPage = () => {
 
     if (data) {
       toast.success("Login successful! Welcome back 👋", {
-        style: {
-          borderRadius: "12px",
-          background: "#16a34a",
-          color: "#fff",
-        },
-        iconTheme: {
-          primary: "#fff",
-          secondary: "#16a34a",
-        },
+        style: { borderRadius: "12px", background: "#16a34a", color: "#fff" },
+        iconTheme: { primary: "#fff", secondary: "#16a34a" },
         duration: 3000,
       });
       setTimeout(() => router.push("/"), 1500);
@@ -35,16 +29,44 @@ const LogInPage = () => {
 
     if (error) {
       toast.error(error.message || "Login failed. Please try again.", {
-        style: {
-          borderRadius: "12px",
-          background: "#dc2626",
-          color: "#fff",
-        },
-        iconTheme: {
-          primary: "#fff",
-          secondary: "#dc2626",
-        },
+        style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
+        iconTheme: { primary: "#fff", secondary: "#dc2626" },
         duration: 4000,
+      });
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const loadingToast = toast.loading("Signing in with Google...");
+
+    try {
+      const result = await authClient.signIn.social({
+        provider: "google",
+      });
+
+      toast.dismiss(loadingToast);
+
+      if (result?.error) {
+        toast.error("Google login failed. Please try again.", {
+          style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
+          iconTheme: { primary: "#fff", secondary: "#dc2626" },
+        });
+        return;
+      }
+
+      toast.success("Google login successful 🎉", {
+        style: { borderRadius: "12px", background: "#16a34a", color: "#fff" },
+        iconTheme: { primary: "#fff", secondary: "#16a34a" },
+        duration: 3000,
+      });
+
+      setTimeout(() => router.push("/"), 1500);
+    } catch (error) {
+      toast.dismiss(loadingToast);
+
+      toast.error(error?.message || "Google login failed.", {
+        style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
+        iconTheme: { primary: "#fff", secondary: "#dc2626" },
       });
     }
   };
@@ -58,7 +80,9 @@ const LogInPage = () => {
 
         <form onSubmit={onSubmit} className="space-y-5">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -69,7 +93,9 @@ const LogInPage = () => {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Password</label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -86,6 +112,24 @@ const LogInPage = () => {
             Login
           </button>
         </form>
+
+        {/* OR Divider */}
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px bg-gray-200" />
+          <p className="text-sm text-gray-400 font-medium">or</p>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Google Login */}
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 px-4 hover:bg-gray-50 transition-all duration-200 group"
+        >
+          <FcGoogle size={22} />
+          <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">
+            Continue with Google
+          </span>
+        </button>
       </div>
     </div>
   );

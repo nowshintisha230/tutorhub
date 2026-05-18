@@ -2,18 +2,43 @@
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 
 const SignUpPage = () => {
   const router = useRouter();
+  const [passwordError, setPasswordError] = useState("");
+
+  // Password validation function
+  const validatePassword = (password) => {
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long.";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "Password must contain at least one uppercase letter.";
+    }
+    if (!/[a-z]/.test(password)) {
+      return "Password must contain at least one lowercase letter.";
+    }
+    return ""; // valid
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const user = Object.fromEntries(formData.entries());
 
-    const { data, error } = await authClient.signUp.email({
+    // Validate before calling API
+    const error = validatePassword(user.password);
+    if (error) {
+      setPasswordError(error);
+      return; // Stop here, don't register
+    }
+
+    setPasswordError(""); // Clear any previous error
+
+    const { data, error: authError } = await authClient.signUp.email({
       email: user.email,
       password: user.password,
       name: user.name,
@@ -29,8 +54,8 @@ const SignUpPage = () => {
       setTimeout(() => router.push("/"), 1500);
     }
 
-    if (error) {
-      toast.error(error.message || "Registration failed. Please try again.", {
+    if (authError) {
+      toast.error(authError.message || "Registration failed. Please try again.", {
         style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
         iconTheme: { primary: "#fff", secondary: "#dc2626" },
         duration: 4000,
@@ -40,14 +65,9 @@ const SignUpPage = () => {
 
   const handleGoogleSignin = async () => {
     const loadingToast = toast.loading("Redirecting to Google...");
-
     try {
-      const result = await authClient.signIn.social({
-        provider: "google",
-      });
-
+      const result = await authClient.signIn.social({ provider: "google" });
       toast.dismiss(loadingToast);
-
       if (result?.error) {
         toast.error("Google login failed. Try again.", {
           style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
@@ -55,7 +75,6 @@ const SignUpPage = () => {
         });
         return;
       }
-
       toast.success("Google login successful 🎉", {
         style: { borderRadius: "12px", background: "#16a34a", color: "#fff" },
         iconTheme: { primary: "#fff", secondary: "#16a34a" },
@@ -63,7 +82,6 @@ const SignUpPage = () => {
       });
     } catch (error) {
       toast.dismiss(loadingToast);
-
       toast.error(error?.message || "Google login failed.", {
         style: { borderRadius: "12px", background: "#dc2626", color: "#fff" },
         iconTheme: { primary: "#fff", secondary: "#dc2626" },
@@ -112,6 +130,7 @@ const SignUpPage = () => {
             />
           </div>
 
+          {/* Password field with error */}
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700">Password</label>
             <input
@@ -119,8 +138,19 @@ const SignUpPage = () => {
               name="password"
               placeholder="Enter password"
               required
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
+              onChange={() => setPasswordError("")} // Clear error when typing
+              className={`w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 ${
+                passwordError
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-green-500"
+              }`}
             />
+            {/* 👇 Error message shown here */}
+            {passwordError && (
+              <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                ⚠️ {passwordError}
+              </p>
+            )}
           </div>
 
           <button
@@ -133,9 +163,7 @@ const SignUpPage = () => {
 
         <div className="flex items-center gap-3 my-6">
           <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-sm text-gray-400 font-medium">
-            or continue with
-          </span>
+          <span className="text-sm text-gray-400 font-medium">or continue with</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 

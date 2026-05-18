@@ -162,7 +162,7 @@ export default function NavBar() {
                 Log In
               </Link>
               <Link
-                href="/register"
+                href={"/signup"}
                 className="btn-register font-sora text-sm font-semibold px-5 py-2 rounded-lg"
               >
                 Register
@@ -208,7 +208,7 @@ export default function NavBar() {
                 Log In
               </Link>
               <Link
-                href="/register"
+                href={"/signup"}
                 onClick={() => setMenuOpen(false)}
                 className="btn-register font-sora flex-1 text-center text-sm font-semibold px-4 py-2.5 rounded-xl"
               >

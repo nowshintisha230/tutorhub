@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const TutorsCard = ({ tutor }) => {
   const {
+    _id,
     tutorName,
     photoUrl,
     subject,
@@ -64,7 +66,11 @@ const TutorsCard = ({ tutor }) => {
             ৳{hourlyFee}/hr
           </p>
         </div>
-
+<Link href={`tutors/${_id}`}>
+          <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm transition">
+            View Details
+          </button>
+          </Link>
       </div>
     </div>
   );

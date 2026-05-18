@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import MyBookingsTable from "./MyBookingsTable";
+import MyBookingsTable from "../components/MyBookingsTable";
 
 const MyBookingPage = async () => {
   const session = await auth.api.getSession({

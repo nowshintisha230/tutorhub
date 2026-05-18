@@ -1,11 +1,14 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
+
 const DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
 export default function AddTutorPage() {
+  const { data: session } = authClient.useSession();
+
   const onSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.currentTarget);
 
     const tutor = {
@@ -20,43 +23,26 @@ export default function AddTutorPage() {
       location: formData.get("location"),
       teachingMode: formData.get("teachingMode"),
       availableDays: formData.getAll("availableDays"),
+      addedBy: session?.user?.email,
     };
 
-    console.log(tutor);
-const res =await fetch('http://localhost:5000/tutor',{
-    method:'POST',
-    headers:{
-        'content-type':'application/json'
-    },
-    body:JSON.stringify(tutor)
-})
-const data=await res.json()
-console.log(data)
+    const res = await fetch("http://localhost:5000/tutor", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(tutor),
+    });
 
+    const data = await res.json();
+    console.log(data);
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add Tutor</h1>
-
       <form onSubmit={onSubmit} className="space-y-4">
-        {/* Tutor Name */}
-        <input
-          name="tutorName"
-          placeholder="Tutor Name"
-          className="border p-2 w-full"
-          required
-        />
+        <input name="tutorName" placeholder="Tutor Name" className="border p-2 w-full" required />
+        <input name="photoUrl" placeholder="Photo URL" className="border p-2 w-full" required />
 
-        {/* Photo URL */}
-        <input
-          name="photoUrl"
-          placeholder="Photo URL"
-          className="border p-2 w-full"
-          required
-        />
-
-        {/* Subject */}
         <select name="subject" className="border p-2 w-full" required>
           <option value="">Select Subject</option>
           <option value="mathematics">Mathematics</option>
@@ -69,7 +55,6 @@ console.log(data)
           <option value="economics">Economics</option>
         </select>
 
-        {/* Available Days */}
         <div className="flex flex-wrap gap-2">
           {DAYS.map((day) => (
             <label key={day} className="flex items-center gap-1">
@@ -79,7 +64,6 @@ console.log(data)
           ))}
         </div>
 
-        {/* Time Slot */}
         <select name="timeSlot" className="border p-2 w-full" required>
           <option value="">Select Time Slot</option>
           <option>6:00 AM – 9:00 AM</option>
@@ -89,33 +73,10 @@ console.log(data)
           <option>6:00 PM – 9:00 PM</option>
         </select>
 
-        {/* Hourly Fee */}
-        <input
-          type="number"
-          name="hourlyFee"
-          placeholder="Hourly Fee"
-          className="border p-2 w-full"
-          required
-        />
+        <input type="number" name="hourlyFee" placeholder="Hourly Fee" className="border p-2 w-full" required />
+        <input type="number" name="totalSlots" placeholder="Total Slots" className="border p-2 w-full" required />
+        <input type="date" name="startDate" className="border p-2 w-full" required />
 
-        {/* Total Slots */}
-        <input
-          type="number"
-          name="totalSlots"
-          placeholder="Total Slots"
-          className="border p-2 w-full"
-          required
-        />
-
-        {/* Start Date */}
-        <input
-          type="date"
-          name="startDate"
-          className="border p-2 w-full"
-          required
-        />
-
-        {/* Experience */}
         <textarea
           name="institutionExperience"
           placeholder="Institution & Experience"
@@ -124,15 +85,8 @@ console.log(data)
           required
         />
 
-        {/* Location */}
-        <input
-          name="location"
-          placeholder="Location"
-          className="border p-2 w-full"
-          required
-        />
+        <input name="location" placeholder="Location" className="border p-2 w-full" required />
 
-        {/* Teaching Mode */}
         <select name="teachingMode" className="border p-2 w-full" required>
           <option value="">Teaching Mode</option>
           <option value="online">Online</option>
@@ -140,10 +94,7 @@ console.log(data)
           <option value="both">Both</option>
         </select>
 
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded"
-        >
+        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded">
           Add Tutor
         </button>
       </form>

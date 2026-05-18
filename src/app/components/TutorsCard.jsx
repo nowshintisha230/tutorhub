@@ -68,7 +68,7 @@ const TutorsCard = ({ tutor }) => {
         </div>
 <Link href={`tutors/${_id}`}>
           <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm transition">
-            View Details
+            Book Session
           </button>
           </Link>
       </div>

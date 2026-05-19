@@ -1,11 +1,17 @@
 "use client";
 
+import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 
 const DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
 export default function AddTutorPage() {
   const { data: session } = authClient.useSession();
+
+  
+  useEffect(() => {
+    document.title = "Add Tutor | Tutor Hub";
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +45,7 @@ export default function AddTutorPage() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add Tutor</h1>
+
       <form onSubmit={onSubmit} className="space-y-4">
         <input name="tutorName" placeholder="Tutor Name" className="border p-2 w-full" required />
         <input name="photoUrl" placeholder="Photo URL" className="border p-2 w-full" required />

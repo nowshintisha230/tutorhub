@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { Avatar } from "@heroui/react";
 import { useTheme } from "next-themes";
 
 export default function NavBar() {
@@ -43,12 +42,12 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`
-        fixed top-0 left-0 right-0 z-50 transition-all duration-300
-        ${scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
+      ${
+        scrolled
           ? "bg-white/90 dark:bg-black/90 backdrop-blur-md shadow-md"
-          : "bg-white dark:bg-black"}
-      `}
+          : "bg-white dark:bg-black"
+      }`}
     >
       {/* TOP BAR */}
       <div className="h-[3px] bg-gradient-to-r from-green-400 via-emerald-300 to-green-600" />
@@ -90,10 +89,7 @@ export default function NavBar() {
               ))}
 
             {/* THEME TOGGLE */}
-            <button
-              onClick={toggleTheme}
-              className="text-xl ml-2"
-            >
+            <button onClick={toggleTheme} className="text-xl ml-2">
               {theme === "dark" ? "🌞" : "🌙"}
             </button>
           </div>
@@ -102,7 +98,12 @@ export default function NavBar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <Avatar src={user?.image || undefined} size="sm" />
+                {/* ✅ SAFE IMAGE REPLACEMENT */}
+                <img
+                  src={user?.image}
+                  alt="user"
+                  className="w-8 h-8 rounded-full object-cover border"
+                />
 
                 <span className="text-sm text-gray-900 dark:text-white font-medium">
                   {user?.name}
@@ -147,7 +148,6 @@ export default function NavBar() {
       {/* MOBILE MENU */}
       {menuOpen && (
         <div className="md:hidden px-5 pb-5 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
-
           {publicLinks.map((link) => (
             <Link
               key={link.href}

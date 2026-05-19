@@ -2,6 +2,20 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import MyTutorTable from "../components/MyTutorTable";
 
+// ✅ Dynamic metadata
+export async function generateMetadata() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const name = session?.user?.name || "My";
+
+  return {
+    title: `${name}'s Tutor List`,
+    description: `Tutors added by ${name}`,
+  };
+}
+
 const MyTutorPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -18,7 +32,7 @@ const MyTutorPage = async () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-8">My Tutor List</h1>
+      <h1 className="text-3xl font-bold mb-8">{user?.name}'s Tutor List</h1>
       <MyTutorTable tutors={tutors} />
     </div>
   );

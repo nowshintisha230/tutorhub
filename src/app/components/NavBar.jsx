@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useTheme } from "next-themes";
@@ -14,6 +14,8 @@ export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => setMounted(true), []);
 
@@ -21,6 +23,17 @@ export default function NavBar() {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const toggleTheme = () => {
@@ -98,23 +111,73 @@ export default function NavBar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                {/* ✅ SAFE IMAGE REPLACEMENT */}
-                <img
-                  src={user?.image}
-                  alt="user"
-                  className="w-8 h-8 rounded-full object-cover border"
-                />
+                {/* PROFILE DROPDOWN */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setProfileDropdownOpen((prev) => !prev)}
+                    className="flex items-center gap-2 focus:outline-none"
+                  >
+                    <img
+                      src={user?.image}
+                      alt="user"
+                      className="w-9 h-9 rounded-full object-cover border-2 border-green-500 hover:border-green-400 transition cursor-pointer"
+                    />
+                    {/* Small chevron indicator */}
+                    <svg
+                      className={`w-3 h-3 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+                        profileDropdownOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
 
-                <span className="text-sm text-gray-900 dark:text-white font-medium">
-                  {user?.name}
-                </span>
+                  {/* DROPDOWN MENU */}
+                  {profileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-xl py-1 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                      {/* User info header */}
+                      <div className="px-4 py-3 border-b border-gray-100 dark:border-zinc-800">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                          {user?.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
 
-                <button
-                  onClick={() => authClient.signOut()}
-                  className="px-4 py-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
-                >
-                  Logout
-                </button>
+                      {/* Profile link */}
+                      <Link
+                        href="/profile"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-zinc-800 hover:text-green-600 transition"
+                      >
+                        <span>👤</span> My Profile
+                      </Link>
+
+                      {/* Divider */}
+                      <div className="my-1 border-t border-gray-100 dark:border-zinc-800" />
+
+                      {/* Logout */}
+                      <button
+                        onClick={() => {
+                          authClient.signOut();
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-zinc-800 transition"
+                      >
+                        <span>🚪</span> Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
@@ -170,6 +233,43 @@ export default function NavBar() {
                 {link.label}
               </Link>
             ))}
+
+          {/* Mobile profile link */}
+          {user && (
+            <>
+              <div className="flex items-center gap-3 py-3 border-t border-gray-200 dark:border-gray-800 mt-2">
+                <img
+                  src={user?.image}
+                  alt="user"
+                  className="w-8 h-8 rounded-full object-cover border-2 border-green-500"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {user?.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="block py-2 text-green-600 font-medium"
+              >
+                👤 My Profile
+              </Link>
+              <button
+                onClick={() => {
+                  authClient.signOut();
+                  setMenuOpen(false);
+                }}
+                className="block py-2 text-red-500"
+              >
+                🚪 Logout
+              </button>
+            </>
+          )}
 
           <button
             onClick={toggleTheme}

@@ -13,20 +13,41 @@ export default function PopularSubjects() {
   ];
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4 bg-white dark:bg-black transition-colors duration-300">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-4">Popular Subjects</h2>
-        <p className="text-center text-gray-500 mb-12">
+
+        <h2 className="text-3xl font-bold text-center mb-4 text-gray-900 dark:text-white">
+          Popular Subjects
+        </h2>
+
+        <p className="text-center text-gray-500 dark:text-gray-300 mb-12">
           Explore top subjects and find the perfect tutor for you
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
           {subjects.map((subject) => (
-            <Link href={`/tutors?subject=${subject.name.toLowerCase()}`} key={subject.name}>
-              <div className="bg-white border rounded-2xl p-6 text-center shadow hover:shadow-md hover:border-green-400 hover:-translate-y-1 transition-all cursor-pointer">
+            <Link
+              href={`/tutors?subject=${subject.name.toLowerCase()}`}
+              key={subject.name}
+            >
+              <div className="
+                bg-white dark:bg-gray-900
+                border border-gray-200 dark:border-gray-800
+                rounded-2xl p-6 text-center
+                shadow hover:shadow-md
+                hover:border-green-400
+                hover:-translate-y-1
+                transition-all cursor-pointer
+              ">
                 <div className="text-4xl mb-3">{subject.icon}</div>
-                <h3 className="font-semibold text-gray-800">{subject.name}</h3>
-                <p className="text-sm text-green-500 mt-1">{subject.tutors} Tutors</p>
+
+                <h3 className="font-semibold text-gray-800 dark:text-white">
+                  {subject.name}
+                </h3>
+
+                <p className="text-sm text-green-500 mt-1">
+                  {subject.tutors} Tutors
+                </p>
               </div>
             </Link>
           ))}

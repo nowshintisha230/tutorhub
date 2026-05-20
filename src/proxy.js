@@ -18,5 +18,5 @@ if(!session){
  
  
 export const config = {
-  matcher: '/add-tutor',
+  matcher:[ '/add-tutor','/tutors/:path'],
 }

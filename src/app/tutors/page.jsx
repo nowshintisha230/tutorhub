@@ -19,7 +19,7 @@ const TutorPage = () => {
       if (endDate) params.append("endDate", endDate);
 
       const res = await fetch(
-        `http://localhost:5000/tutor?${params.toString()}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/tutor?${params.toString()}`
       );
 
       // ✅ important safety check

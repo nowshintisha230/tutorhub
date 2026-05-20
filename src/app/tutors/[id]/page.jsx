@@ -3,9 +3,12 @@
 import Image from "next/image";
 import React, { useEffect, useState, use } from "react";
 import BookingModal from "@/app/components/BookingModal";
+import { authClient } from "@/lib/auth-client";
 
 const TutorsDetailsPage = ({ params }) => {
   const { id } = use(params);
+
+
   const [tutor, setTutor] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -14,7 +17,13 @@ const TutorsDetailsPage = ({ params }) => {
 
   useEffect(() => {
     const fetchTutor = async () => {
-      const res = await fetch(`http://localhost:5000/tutor/${id}`);
+      const {data:tokenData}=await authClient.token();
+      console.log(tokenData)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${id}`,{
+        headers:{
+          authorization:`Bearer ${tokenData?.token}`
+        }
+      });
       const data = await res.json();
       setTutor(data);
     };

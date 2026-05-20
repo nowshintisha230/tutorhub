@@ -10,7 +10,7 @@ const MyBookingsTable = ({ bookings }) => {
     const confirmDelete = confirm("Are you sure you want to cancel?");
     if (!confirmDelete) return;
 
-    const res = await fetch(`http://localhost:5000/bookings/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/bookings/${id}`, {
       method: "PATCH",
     });
 

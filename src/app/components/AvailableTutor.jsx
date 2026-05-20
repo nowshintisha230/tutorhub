@@ -7,7 +7,7 @@ export default function AvailableTutor() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/tutor/featured")
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/featured`)
       .then((res) => res.json())
       .then((data) => {
         setTutors(data);

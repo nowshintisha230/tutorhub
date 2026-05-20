@@ -24,7 +24,7 @@ const MyTutorPage = async () => {
   const user = session?.user;
 
   const res = await fetch(
-    `http://localhost:5000/tutor/user/${user?.email}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/user/${user?.email}`,
     { cache: "no-store" }
   );
 

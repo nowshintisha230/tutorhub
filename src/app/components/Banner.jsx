@@ -388,13 +388,13 @@ export default function Banner() {
                     <polyline points="12 5 19 12 12 19"/>
                   </svg>
                 </Link>
-                <Link href="/how-it-works" className="cta-secondary font-sora text-sm px-6 py-3.5">
+               <a href="#how-it-works" className="cta-secondary font-sora text-sm px-6 py-3.5">
                   How It Works
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="10 8 14 12 10 16"/>
                   </svg>
-                </Link>
+                </a>
               </div>
 
               {/* Stats */}

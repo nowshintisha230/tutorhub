@@ -21,137 +21,171 @@ export default function Footer() {
     { label: "Terms of Service", href: "/terms" },
   ];
 
-  const socialLinks = [
+  const socials = [
     {
       label: "Facebook",
       href: "https://facebook.com",
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-        </svg>
-      ),
-    },
-    {
-      label: "Twitter",
-      href: "https://twitter.com",
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231z" />
-        </svg>
-      ),
+      path: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z",
     },
     {
       label: "Instagram",
       href: "https://instagram.com",
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="2" y="2" width="20" height="20" rx="5" />
-          <circle cx="12" cy="12" r="4" />
-        </svg>
-      ),
+      path: "M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M6.5 19.5h11a3 3 0 003-3v-11a3 3 0 00-3-3h-11a3 3 0 00-3 3v11a3 3 0 003 3z",
     },
     {
       label: "LinkedIn",
       href: "https://linkedin.com",
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
-        </svg>
-      ),
+      path: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z",
     },
     {
       label: "YouTube",
       href: "https://youtube.com",
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58a2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z" />
-          <polygon points="9.75 15.02 15.5 12 9.75 8.98" fill="white" />
-        </svg>
-      ),
+      path: "M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z",
     },
   ];
 
   return (
-    <footer className="bg-white dark:bg-black text-gray-700 dark:text-gray-300 transition-colors">
-
-      {/* top line */}
-      <div className="h-[3px] bg-gradient-to-r from-green-500 via-emerald-400 to-green-600" />
-
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-14">
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-
-          {/* Brand */}
-          <div>
-            <a href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white font-bold">
+    <footer className="bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800">
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          
+          {/* Logo Section */}
+          <div className="md:col-span-1">
+            <a href="/" className="inline-flex items-center gap-2 mb-5">
+              <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center text-white font-bold text-sm">
                 T
               </div>
-              <span className="text-xl font-bold text-black dark:text-white">
+
+              <span className="text-lg font-bold text-gray-900 dark:text-white">
                 Tutor<span className="text-green-500">Hub</span>
               </span>
             </a>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Connecting learners with expert tutors.
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
+              Connecting learners with expert tutors worldwide.
             </p>
-          </div>
 
-          {/* Learning */}
-          <div>
-            <h3 className="font-semibold mb-4 text-black dark:text-white">Learning</h3>
-            <div className="flex flex-col gap-2 text-sm">
-              {learningLinks.map((l) => (
-                <a key={l.href} href={l.href} className="hover:text-green-500">
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="font-semibold mb-4 text-black dark:text-white">Company</h3>
-            <div className="flex flex-col gap-2 text-sm">
-              {companyLinks.map((l) => (
-                <a key={l.href} href={l.href} className="hover:text-green-500">
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Social */}
-          <div>
-            <h3 className="font-semibold mb-4 text-black dark:text-white">Follow Us</h3>
-            <div className="flex gap-3 flex-wrap">
-              {socialLinks.map((s) => (
-                
+            <div className="flex gap-2">
+              {socials.map((s) => (
+                <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-green-500 hover:text-white transition"
+                  aria-label={s.label}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 hover:text-green-500 hover:border-green-500 transition-colors"
                 >
-                  {s.icon}
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d={s.path} />
+                  </svg>
                 </a>
               ))}
             </div>
           </div>
 
-        </div>
+          {/* Learning Links */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
+              Learning
+            </p>
 
-        {/* bottom */}
-        <div className="border-t border-gray-200 dark:border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between text-xs gap-3">
-          <p>
-            © {currentYear} <span className="text-green-500">TutorHub</span>
-          </p>
-          <div className="flex gap-4">
-            <a href="/privacy" className="hover:text-green-500">Privacy</a>
-            <a href="/terms" className="hover:text-green-500">Terms</a>
-            <a href="/cookies" className="hover:text-green-500">Cookies</a>
+            <ul className="space-y-3">
+              {learningLinks.map((l) => (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
+              Company
+            </p>
+
+            <ul className="space-y-3">
+              {companyLinks.map((l) => (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* CTA Section */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
+              Get Started
+            </p>
+
+            <div className="bg-green-50 dark:bg-green-950 rounded-xl p-5 border border-green-100 dark:border-green-900">
+              <p className="text-sm font-semibold text-gray-800 dark:text-white mb-1">
+                Find your tutor today
+              </p>
+
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                Join thousands of students learning with TutorHub.
+              </p>
+
+              <a
+                href="/tutors"
+                className="block text-center text-sm font-semibold bg-green-500 hover:bg-green-600 text-white rounded-lg px-4 py-2 transition-colors"
+              >
+                Browse Tutors
+              </a>
+            </div>
           </div>
         </div>
 
+        {/* Bottom Footer */}
+        <div className="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            © {currentYear} TutorHub. All rights reserved.
+          </p>
+
+          <div className="flex gap-6">
+            <a
+              href="/privacy"
+              className="text-xs text-gray-400 dark:text-gray-500 hover:text-green-500 transition-colors"
+            >
+              Privacy
+            </a>
+
+            <a
+              href="/terms"
+              className="text-xs text-gray-400 dark:text-gray-500 hover:text-green-500 transition-colors"
+            >
+              Terms
+            </a>
+
+            <a
+              href="/cookies"
+              className="text-xs text-gray-400 dark:text-gray-500 hover:text-green-500 transition-colors"
+            >
+              Cookies
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );

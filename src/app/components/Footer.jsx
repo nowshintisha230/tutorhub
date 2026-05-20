@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -85,15 +83,14 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <a href="/" className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white font-bold">
                 T
               </div>
               <span className="text-xl font-bold text-black dark:text-white">
                 Tutor<span className="text-green-500">Hub</span>
               </span>
-            </Link>
-
+            </a>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Connecting learners with expert tutors.
             </p>
@@ -104,9 +101,9 @@ export default function Footer() {
             <h3 className="font-semibold mb-4 text-black dark:text-white">Learning</h3>
             <div className="flex flex-col gap-2 text-sm">
               {learningLinks.map((l) => (
-                <Link key={l.href} href={l.href} className="hover:text-green-500">
+                <a key={l.href} href={l.href} className="hover:text-green-500">
                   {l.label}
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -116,9 +113,9 @@ export default function Footer() {
             <h3 className="font-semibold mb-4 text-black dark:text-white">Company</h3>
             <div className="flex flex-col gap-2 text-sm">
               {companyLinks.map((l) => (
-                <Link key={l.href} href={l.href} className="hover:text-green-500">
+                <a key={l.href} href={l.href} className="hover:text-green-500">
                   {l.label}
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -126,13 +123,13 @@ export default function Footer() {
           {/* Social */}
           <div>
             <h3 className="font-semibold mb-4 text-black dark:text-white">Follow Us</h3>
-
             <div className="flex gap-3 flex-wrap">
               {socialLinks.map((s) => (
-                <a
+                
                   key={s.label}
                   href={s.href}
                   target="_blank"
+                  rel="noreferrer"
                   className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-green-500 hover:text-white transition"
                 >
                   {s.icon}
@@ -148,11 +145,10 @@ export default function Footer() {
           <p>
             © {currentYear} <span className="text-green-500">TutorHub</span>
           </p>
-
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-green-500">Privacy</Link>
-            <Link href="/terms" className="hover:text-green-500">Terms</Link>
-            <Link href="/cookies" className="hover:text-green-500">Cookies</Link>
+            <a href="/privacy" className="hover:text-green-500">Privacy</a>
+            <a href="/terms" className="hover:text-green-500">Terms</a>
+            <a href="/cookies" className="hover:text-green-500">Cookies</a>
           </div>
         </div>
 

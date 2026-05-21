@@ -9,7 +9,6 @@ const TutorPage = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // Fetch tutors safely
   const fetchTutors = async () => {
     try {
       const params = new URLSearchParams();
@@ -22,7 +21,6 @@ const TutorPage = () => {
         `${process.env.NEXT_PUBLIC_SERVER_URL}/tutor?${params.toString()}`
       );
 
-      // ✅ important safety check
       if (!res.ok) {
         console.error("API Error:", res.status);
         return;
@@ -35,12 +33,10 @@ const TutorPage = () => {
     }
   };
 
-  // Fetch when filters change
   useEffect(() => {
     fetchTutors();
   }, [search, startDate, endDate]);
 
-  // Dynamic title
   useEffect(() => {
     document.title = search
       ? `Search: ${search} | Tutors`
@@ -49,15 +45,11 @@ const TutorPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-
-      {/* Title */}
       <h1 className="text-2xl md:text-3xl font-semibold text-center mb-6">
         All Tutors
       </h1>
 
-      {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3 mb-6">
-
         <input
           type="text"
           placeholder="Search tutor by name..."
@@ -66,28 +58,32 @@ const TutorPage = () => {
           className="border p-2 rounded w-full"
         />
 
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="border p-2 rounded"
-        />
+        <div className="flex flex-col">
+          <label className="text-sm mb-1">Start Date</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border p-2 rounded"
+          />
+        </div>
 
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="border p-2 rounded"
-        />
+        <div className="flex flex-col">
+          <label className="text-sm mb-1">End Date</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border p-2 rounded"
+          />
+        </div>
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {tutors?.map((tutor) => (
           <TutorsCard key={tutor._id} tutor={tutor} />
         ))}
       </div>
-
     </div>
   );
 };

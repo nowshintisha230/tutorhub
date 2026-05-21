@@ -101,7 +101,13 @@ export default function AddTutorPage() {
 
         <input type="number" name="hourlyFee" placeholder="Hourly Fee" className={inputCls} required />
         <input type="number" name="totalSlots" placeholder="Total Slots" className={inputCls} required />
-        <input type="date" name="startDate" className={inputCls} required />
+
+        <div>
+          <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
+            Session Start Date
+          </label>
+          <input type="date" name="startDate" className={inputCls} required />
+        </div>
 
         <textarea
           name="institutionExperience"

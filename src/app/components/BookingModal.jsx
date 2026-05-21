@@ -27,6 +27,7 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
       tutorId: tutor?._id,
       tutorName: tutor?.tutorName,
       subject: tutor?.subject,
+      status: "pending",
     };
 
     try {
@@ -109,6 +110,7 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
           ))}
 
           {[
+            { label: "Tutor ID", value: tutor?._id || "" },
             { label: "Tutor Name", value: tutor?.tutorName || "" },
             { label: "Student Email", value: user?.email || "" },
             { label: "Subject", value: tutor?.subject || "" },
@@ -141,6 +143,21 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
                          bg-green-50 dark:bg-green-900/30
                          text-green-700 dark:text-green-400
                          cursor-not-allowed"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm mb-1 block text-gray-700 dark:text-gray-300">
+              Booking Status
+            </label>
+            <input
+              type="text"
+              value="Pending"
+              readOnly
+              className="w-full border border-yellow-300 dark:border-yellow-700 rounded-lg px-3 py-2 text-sm
+                         bg-yellow-50 dark:bg-yellow-900/30
+                         text-yellow-700 dark:text-yellow-400
+                         cursor-not-allowed capitalize"
             />
           </div>
         </div>

@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import toast from "react-hot-toast"; // ✅ import toast
+import toast from "react-hot-toast";
 
 const DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
 export default function AddTutorPage() {
   const { data: session } = authClient.useSession();
+  const router = useRouter();
 
   useEffect(() => {
     document.title = "Add Tutor | Tutor Hub";
@@ -32,7 +34,6 @@ export default function AddTutorPage() {
       addedBy: session?.user?.email ?? "",
     };
 
-    // ✅ toast.promise handles loading/success/error automatically
     await toast.promise(
       fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor`, {
         method: "POST",
@@ -43,7 +44,6 @@ export default function AddTutorPage() {
           const errData = await res.json().catch(() => ({}));
           throw new Error(errData?.message || `Server error: ${res.status}`);
         }
-        e.target.reset(); // ✅ reset form on success
         return res.json();
       }),
       {
@@ -52,6 +52,10 @@ export default function AddTutorPage() {
         error: (err) => err.message || "Failed to add tutor.",
       }
     );
+
+    setTimeout(() => {
+      router.push("/my-tutors");
+    }, 1500);
   };
 
   const inputCls = "border p-2 w-full bg-white dark:bg-zinc-800 text-black dark:text-white rounded";

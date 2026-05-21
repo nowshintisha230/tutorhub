@@ -63,71 +63,82 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
       onClick={() => onOpenChange(false)}
     >
       <div
-        className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6"
+        className="rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 bg-white dark:bg-gray-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Book Session</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+          Book Session
+        </h2>
 
         <div className="flex flex-col gap-3">
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Student Name</label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+          {[
+            {
+              label: "Student Name",
+              value: studentName,
+              onChange: (e) => setStudentName(e.target.value),
+              placeholder: "Enter your name",
+              readOnly: false,
+            },
+            {
+              label: "Phone Number",
+              value: phone,
+              onChange: (e) => setPhone(e.target.value),
+              placeholder: "017XXXXXXXX",
+              readOnly: false,
+            },
+          ].map(({ label, value, onChange, placeholder, readOnly }) => (
+            <div key={label}>
+              <label className="text-sm mb-1 block text-gray-700 dark:text-gray-300">
+                {label}
+              </label>
+              <input
+                type="text"
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                readOnly={readOnly}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm
+                           bg-white dark:bg-gray-800
+                           text-gray-900 dark:text-white
+                           placeholder-gray-400 dark:placeholder-gray-500
+                           focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          ))}
+
+          {[
+            { label: "Tutor Name", value: tutor?.tutorName || "" },
+            { label: "Student Email", value: user?.email || "" },
+            { label: "Subject", value: tutor?.subject || "" },
+          ].map(({ label, value }) => (
+            <div key={label}>
+              <label className="text-sm mb-1 block text-gray-700 dark:text-gray-300">
+                {label}
+              </label>
+              <input
+                type="text"
+                value={value}
+                readOnly
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm
+                           bg-gray-100 dark:bg-gray-700
+                           text-gray-600 dark:text-gray-300
+                           cursor-not-allowed capitalize"
+              />
+            </div>
+          ))}
 
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Phone Number</label>
-            <input
-              type="text"
-              placeholder="017XXXXXXXX"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Tutor Name</label>
-            <input
-              type="text"
-              value={tutor?.tutorName || ""}
-              readOnly
-              className="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Student Email</label>
-            <input
-              type="text"
-              value={user?.email || ""}
-              readOnly
-              className="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Subject</label>
-            <input
-              type="text"
-              value={tutor?.subject || ""}
-              readOnly
-              className="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed capitalize"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Available Slots</label>
+            <label className="text-sm mb-1 block text-gray-700 dark:text-gray-300">
+              Available Slots
+            </label>
             <input
               type="text"
               value={`${tutor?.totalSlots} Slots Remaining`}
               readOnly
-              className="w-full border border-green-200 bg-green-50 rounded-lg px-3 py-2 text-sm text-green-600 cursor-not-allowed"
+              className="w-full border border-green-300 dark:border-green-700 rounded-lg px-3 py-2 text-sm
+                         bg-green-50 dark:bg-green-900/30
+                         text-green-700 dark:text-green-400
+                         cursor-not-allowed"
             />
           </div>
         </div>
@@ -135,14 +146,18 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
         <div className="flex justify-end gap-3 mt-6">
           <button
             onClick={() => onOpenChange(false)}
-            className="px-4 py-2 rounded-lg text-red-500 border border-red-300 hover:bg-red-50 text-sm font-medium transition"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition
+                       text-red-500 border border-red-300 dark:border-red-600
+                       hover:bg-red-50 dark:hover:bg-red-900/20"
           >
             Cancel
           </button>
           <button
             onClick={handleBooking}
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition
+                       bg-green-500 hover:bg-green-600 text-white
+                       disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? "Booking..." : "Confirm Booking"}
           </button>

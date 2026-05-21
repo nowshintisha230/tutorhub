@@ -8,7 +8,6 @@ import { authClient } from "@/lib/auth-client";
 const TutorsDetailsPage = ({ params }) => {
   const { id } = use(params);
 
-
   const [tutor, setTutor] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -17,12 +16,12 @@ const TutorsDetailsPage = ({ params }) => {
 
   useEffect(() => {
     const fetchTutor = async () => {
-      const {data:tokenData}=await authClient.token();
-      console.log(tokenData)
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${id}`,{
-        headers:{
-          authorization:`Bearer ${tokenData?.token}`
-        }
+      const { data: tokenData } = await authClient.token();
+      console.log(tokenData);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${id}`, {
+        headers: {
+          authorization: `Bearer ${tokenData?.token}`,
+        },
       });
       const data = await res.json();
       setTutor(data);
@@ -39,8 +38,8 @@ const TutorsDetailsPage = ({ params }) => {
 
   if (!tutor) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }

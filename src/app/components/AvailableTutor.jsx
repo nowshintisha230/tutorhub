@@ -15,11 +15,12 @@ export default function AvailableTutor() {
       });
   }, []);
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-[400px]">
-      <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
 
   return (
     <section className="py-10 px-4">
@@ -35,7 +36,9 @@ export default function AvailableTutor() {
             />
             <h3 className="text-xl font-semibold">{tutor.tutorName}</h3>
             <p className="text-gray-500">{tutor.subject}</p>
-            <p className="text-gray-400 text-sm mt-1">{tutor.location} • {tutor.teachingMode}</p>
+            <p className="text-gray-400 text-sm mt-1">
+              {tutor.location} • {tutor.teachingMode}
+            </p>
             <p className="font-bold mt-2">${tutor.hourlyFee} / session</p>
 
             <Link href={`/tutors/${tutor._id}`}>
@@ -45,6 +48,14 @@ export default function AvailableTutor() {
             </Link>
           </div>
         ))}
+      </div>
+
+      <div className="flex justify-center mt-10">
+        <Link href="/tutors">
+          <button className="px-8 py-3 border-2 border-green-600 text-green-600 font-semibold rounded-lg hover:bg-green-600 hover:text-white transition">
+            See All Tutors
+          </button>
+        </Link>
       </div>
     </section>
   );

@@ -25,7 +25,6 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -107,7 +106,7 @@ export default function NavBar() {
             </button>
           </div>
 
-          {/* USER AREA */}
+          {/* USER AREA - DESKTOP */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
@@ -122,7 +121,6 @@ export default function NavBar() {
                       alt="user"
                       className="w-9 h-9 rounded-full object-cover border-2 border-green-500 hover:border-green-400 transition cursor-pointer"
                     />
-                    {/* Small chevron indicator */}
                     <svg
                       className={`w-3 h-3 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
                         profileDropdownOpen ? "rotate-180" : ""
@@ -143,7 +141,6 @@ export default function NavBar() {
                   {/* DROPDOWN MENU */}
                   {profileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-xl py-1 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                      {/* User info header */}
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-zinc-800">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                           {user?.name}
@@ -153,7 +150,6 @@ export default function NavBar() {
                         </p>
                       </div>
 
-                      {/* Profile link */}
                       <Link
                         href="/profile"
                         onClick={() => setProfileDropdownOpen(false)}
@@ -162,10 +158,8 @@ export default function NavBar() {
                         <span>👤</span> My Profile
                       </Link>
 
-                      {/* Divider */}
                       <div className="my-1 border-t border-gray-100 dark:border-zinc-800" />
 
-                      {/* Logout */}
                       <button
                         onClick={() => {
                           authClient.signOut();
@@ -198,7 +192,7 @@ export default function NavBar() {
             )}
           </div>
 
-          {/* MOBILE BUTTON */}
+          {/* MOBILE HAMBURGER BUTTON */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-2xl text-gray-900 dark:text-white"
@@ -234,8 +228,8 @@ export default function NavBar() {
               </Link>
             ))}
 
-          {/* Mobile profile link */}
-          {user && (
+          {/* Mobile: logged-in user info + profile + logout */}
+          {user ? (
             <>
               <div className="flex items-center gap-3 py-3 border-t border-gray-200 dark:border-gray-800 mt-2">
                 <img
@@ -269,8 +263,27 @@ export default function NavBar() {
                 🚪 Logout
               </button>
             </>
+          ) : (
+            // ✅ FIX: Login & Register now show in mobile menu when logged out
+            <div className="flex flex-col gap-2 mt-3 border-t border-gray-200 dark:border-gray-800 pt-3">
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="block text-center px-4 py-2 rounded border border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                onClick={() => setMenuOpen(false)}
+                className="block text-center px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 transition"
+              >
+                Register
+              </Link>
+            </div>
           )}
 
+          {/* Theme toggle */}
           <button
             onClick={toggleTheme}
             className="mt-3 text-xl text-gray-900 dark:text-white"

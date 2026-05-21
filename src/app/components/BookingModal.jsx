@@ -39,9 +39,10 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
       });
 
       const data = await res.json();
+      console.log("Server error details:", data);
 
       if (!res.ok) {
-        toast.error(data.message || "Something went wrong.");
+        toast.error(data.error || data.message || JSON.stringify(data));
         return;
       }
 
@@ -51,6 +52,7 @@ const BookingModal = ({ isOpen, onOpenChange, tutor, onBookingSuccess }) => {
         onOpenChange(false);
       }
     } catch (error) {
+      console.error("Fetch error:", error);
       toast.error("Server error. Please try again later.");
     } finally {
       setLoading(false);

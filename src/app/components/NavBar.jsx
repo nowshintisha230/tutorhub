@@ -50,15 +50,16 @@ export default function NavBar() {
     { label: "Booked Sessions", href: "/my-bookings" },
   ];
 
-  if (!mounted) return null;
+  // Don't hide the whole navbar — only skip theme-dependent icon until mounted
+  // This prevents the flash/dark blink on scroll
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
       ${
         scrolled
-          ? "bg-white/90 dark:bg-black/90 backdrop-blur-md shadow-md"
-          : "bg-white dark:bg-black"
+          ? "bg-white dark:bg-zinc-950 shadow-md border-b border-gray-100 dark:border-zinc-800"
+          : "bg-white dark:bg-zinc-950"
       }`}
     >
       {/* TOP BAR */}
@@ -100,10 +101,12 @@ export default function NavBar() {
                 </Link>
               ))}
 
-            {/* THEME TOGGLE */}
-            <button onClick={toggleTheme} className="text-xl ml-2">
-              {theme === "dark" ? "🌞" : "🌙"}
-            </button>
+            {/* THEME TOGGLE — only render after mount to avoid flash */}
+            {mounted && (
+              <button onClick={toggleTheme} className="text-xl ml-2">
+                {theme === "dark" ? "🌞" : "🌙"}
+              </button>
+            )}
           </div>
 
           {/* USER AREA - DESKTOP */}
@@ -204,7 +207,7 @@ export default function NavBar() {
 
       {/* MOBILE MENU */}
       {menuOpen && (
-        <div className="md:hidden px-5 pb-5 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
+        <div className="md:hidden px-5 pb-5 bg-white dark:bg-zinc-950 border-t border-gray-200 dark:border-zinc-800">
           {publicLinks.map((link) => (
             <Link
               key={link.href}
@@ -284,12 +287,14 @@ export default function NavBar() {
           )}
 
           {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="mt-3 text-xl text-gray-900 dark:text-white"
-          >
-            {theme === "dark" ? "🌞 Light Mode" : "🌙 Dark Mode"}
-          </button>
+          {mounted && (
+            <button
+              onClick={toggleTheme}
+              className="mt-3 text-xl text-gray-900 dark:text-white"
+            >
+              {theme === "dark" ? "🌞 Light Mode" : "🌙 Dark Mode"}
+            </button>
+          )}
         </div>
       )}
     </nav>

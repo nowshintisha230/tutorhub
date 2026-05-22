@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
@@ -9,6 +9,8 @@ import Link from "next/link";
 
 const LogInPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
 
@@ -28,7 +30,7 @@ const LogInPage = () => {
         iconTheme: { primary: "#fff", secondary: "#16a34a" },
         duration: 3000,
       });
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push(callbackUrl), 1500);
     }
 
     if (error) {
@@ -59,7 +61,7 @@ const LogInPage = () => {
         iconTheme: { primary: "#fff", secondary: "#16a34a" },
         duration: 3000,
       });
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push(callbackUrl), 1500);
     } catch (error) {
       toast.dismiss(loadingToast);
       toast.error(error?.message || "Google login failed.", {

@@ -6,69 +6,57 @@ import Link from "next/link";
 
 const DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
-const MyTutorTable = ({ tutors }) => {
-  const [tutorData, setTutorData] = useState(tutors);
+// ─── Update Form (separate component so state resets on each open) ─────────────
+const UpdateForm = ({ tutor, onClose, onSaved }) => {
+  const [loading, setLoading] = useState(false);
+  const [selectedDays, setSelectedDays] = useState(tutor.availableDays ?? []);
 
-  const [deleteId, setDeleteId] = useState(null);
+  const toggleDay = (day) =>
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
 
-  const [updateTutor, setUpdateTutor] = useState(null);
-  const [updateLoading, setUpdateLoading] = useState(false);
-
-  const handleDelete = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${deleteId}`, {
-      method: "DELETE",
-    });
-    const data = await res.json();
-    if (data.deletedCount > 0) {
-      setTutorData((prev) => prev.filter((t) => t._id !== deleteId));
-      toast.success("Tutor deleted successfully");
-    } else {
-      toast.error("Failed to delete tutor");
-    }
-    setDeleteId(null);
-  };
-
-  const handleUpdateSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setUpdateLoading(true);
-    const formData = new FormData(e.currentTarget);
+    setLoading(true);
 
+    const fd = new FormData(e.currentTarget);
     const updated = {
-      tutorName: formData.get("tutorName"),
-      photoUrl: formData.get("photoUrl"),
-      subject: formData.get("subject"),
-      timeSlot: formData.get("timeSlot"),
-      hourlyFee: formData.get("hourlyFee"),
-      totalSlots: formData.get("totalSlots"),
-      startDate: formData.get("startDate"),
-      institutionExperience: formData.get("institutionExperience"),
-      location: formData.get("location"),
-      teachingMode: formData.get("teachingMode"),
-      availableDays: formData.getAll("availableDays"),
+      tutorName: fd.get("tutorName"),
+      photoUrl: fd.get("photoUrl"),
+      subject: fd.get("subject"),
+      timeSlot: fd.get("timeSlot"),
+      hourlyFee: fd.get("hourlyFee"),
+      totalSlots: fd.get("totalSlots"),
+      startDate: fd.get("startDate"),
+      institutionExperience: fd.get("institutionExperience"),
+      location: fd.get("location"),
+      teachingMode: fd.get("teachingMode"),
+      availableDays: selectedDays, // ✅ use controlled state, not FormData
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${updateTutor._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
-      });
-
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${tutor._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated),
+        }
+      );
       const data = await res.json();
 
       if (res.ok) {
-        setTutorData((prev) =>
-          prev.map((t) => (t._id === updateTutor._id ? { ...t, ...updated } : t))
-        );
+        onSaved({ ...tutor, ...updated });
         toast.success("Tutor updated successfully! 🎉");
-        setUpdateTutor(null);
+        onClose();
       } else {
         toast.error(data?.message || "Failed to update tutor");
       }
     } catch {
       toast.error("Server error. Please try again.");
     } finally {
-      setUpdateLoading(false);
+      setLoading(false);
     }
   };
 
@@ -76,6 +64,205 @@ const MyTutorTable = ({ tutors }) => {
     "border p-2 w-full bg-white dark:bg-zinc-800 text-black dark:text-white rounded text-sm";
   const selectCls =
     "border p-2 w-full bg-white dark:bg-zinc-800 text-black dark:text-white rounded text-sm";
+
+  return (
+    // ✅ backdrop: click outside to close
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4">
+          Update Tutor
+        </h2>
+
+        {/* ✅ Plain form — no nested <form> inside anything */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            name="tutorName"
+            defaultValue={tutor.tutorName}
+            placeholder="Tutor Name"
+            className={inputCls}
+            required
+          />
+          <input
+            name="photoUrl"
+            defaultValue={tutor.photoUrl}
+            placeholder="Photo URL"
+            className={inputCls}
+            required
+          />
+
+          <select
+            name="subject"
+            defaultValue={tutor.subject}
+            className={selectCls}
+            required
+          >
+            <option value="">Select Subject</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="biology">Biology</option>
+            <option value="english">English</option>
+            <option value="programming">Programming</option>
+            <option value="bangla">Bangla</option>
+            <option value="economics">Economics</option>
+          </select>
+
+          {/* ✅ Controlled checkboxes — no stale defaultChecked bug */}
+          <div className="flex flex-wrap gap-3">
+            {DAYS.map((day) => (
+              <label
+                key={day}
+                className="flex items-center gap-1 cursor-pointer text-sm dark:text-white"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedDays.includes(day)}
+                  onChange={() => toggleDay(day)}
+                />
+                {day}
+              </label>
+            ))}
+          </div>
+
+          <select
+            name="timeSlot"
+            defaultValue={tutor.timeSlot}
+            className={selectCls}
+            required
+          >
+            <option value="">Select Time Slot</option>
+            <option>6:00 AM – 9:00 AM</option>
+            <option>9:00 AM – 12:00 PM</option>
+            <option>12:00 PM – 3:00 PM</option>
+            <option>3:00 PM – 6:00 PM</option>
+            <option>6:00 PM – 9:00 PM</option>
+          </select>
+
+          <input
+            type="number"
+            name="hourlyFee"
+            defaultValue={tutor.hourlyFee}
+            placeholder="Hourly Fee"
+            className={inputCls}
+            required
+          />
+          <input
+            type="number"
+            name="totalSlots"
+            defaultValue={tutor.totalSlots}
+            placeholder="Total Slots"
+            className={inputCls}
+            required
+          />
+
+          <div>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+              Session Start Date
+            </label>
+            <input
+              type="date"
+              name="startDate"
+              defaultValue={tutor.startDate?.split("T")[0]}
+              className={inputCls}
+              required
+            />
+          </div>
+
+          <textarea
+            name="institutionExperience"
+            defaultValue={tutor.institutionExperience}
+            placeholder="Institution & Experience"
+            className={inputCls}
+            rows={3}
+            required
+          />
+
+          <input
+            name="location"
+            defaultValue={tutor.location}
+            placeholder="Location"
+            className={inputCls}
+            required
+          />
+
+          <select
+            name="teachingMode"
+            defaultValue={tutor.teachingMode}
+            className={selectCls}
+            required
+          >
+            <option value="">Teaching Mode</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+            <option value="both">Both</option>
+          </select>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 text-white transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ─── Main Component ────────────────────────────────────────────────────────────
+const MyTutorTable = ({ tutors }) => {
+  const [tutorData, setTutorData] = useState(tutors);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false); // ✅ prevent double-click
+  const [updateTutor, setUpdateTutor] = useState(null);
+
+  // ✅ Delete with loading guard
+  const handleDelete = async () => {
+    if (deleteLoading) return;
+    setDeleteLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${deleteId}`,
+        { method: "DELETE" }
+      );
+      const data = await res.json();
+
+      if (data.deletedCount > 0) {
+        setTutorData((prev) => prev.filter((t) => t._id !== deleteId));
+        toast.success("Tutor deleted successfully");
+      } else {
+        toast.error("Failed to delete tutor");
+      }
+    } catch {
+      toast.error("Server error. Please try again.");
+    } finally {
+      setDeleteId(null);
+      setDeleteLoading(false);
+    }
+  };
+
+  // ✅ Called by UpdateForm after a successful save
+  const handleSaved = (updatedTutor) => {
+    setTutorData((prev) =>
+      prev.map((t) => (t._id === updatedTutor._id ? updatedTutor : t))
+    );
+  };
 
   if (tutorData.length === 0) {
     return (
@@ -119,7 +306,9 @@ const MyTutorTable = ({ tutors }) => {
                       : "bg-gray-50 dark:bg-zinc-800"
                   } hover:bg-green-50 dark:hover:bg-zinc-700`}
                 >
-                  <td className="px-5 py-4 font-medium text-gray-500 dark:text-gray-400">{index + 1}</td>
+                  <td className="px-5 py-4 font-medium text-gray-500 dark:text-gray-400">
+                    {index + 1}
+                  </td>
                   <td className="px-5 py-4">
                     <img
                       src={tutor.photoUrl}
@@ -127,15 +316,23 @@ const MyTutorTable = ({ tutors }) => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   </td>
-                  <td className="px-5 py-4 font-semibold text-gray-800 dark:text-white">{tutor.tutorName}</td>
-                  <td className="px-5 py-4 text-gray-700 dark:text-gray-300">{tutor.subject}</td>
-                  <td className="px-5 py-4 text-gray-500 dark:text-gray-400">{tutor.location}</td>
+                  <td className="px-5 py-4 font-semibold text-gray-800 dark:text-white">
+                    {tutor.tutorName}
+                  </td>
+                  <td className="px-5 py-4 text-gray-700 dark:text-gray-300">
+                    {tutor.subject}
+                  </td>
+                  <td className="px-5 py-4 text-gray-500 dark:text-gray-400">
+                    {tutor.location}
+                  </td>
                   <td className="px-5 py-4">
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-300 capitalize dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700">
                       {tutor.teachingMode}
                     </span>
                   </td>
-                  <td className="px-5 py-4 font-bold text-green-700 dark:text-green-400">${tutor.hourlyFee}</td>
+                  <td className="px-5 py-4 font-bold text-green-700 dark:text-green-400">
+                    ${tutor.hourlyFee}
+                  </td>
                   <td className="px-5 py-4 text-center">
                     <div className="flex justify-center gap-2">
                       <Link href={`/tutors/${tutor._id}`}>
@@ -166,7 +363,10 @@ const MyTutorTable = ({ tutors }) => {
         {/* Mobile Cards */}
         <div className="flex flex-col gap-4 md:hidden">
           {tutorData.map((tutor) => (
-            <div key={tutor._id} className="border dark:border-zinc-700 rounded-xl p-4 shadow-sm bg-white dark:bg-zinc-900">
+            <div
+              key={tutor._id}
+              className="border dark:border-zinc-700 rounded-xl p-4 shadow-sm bg-white dark:bg-zinc-900"
+            >
               <div className="flex items-center gap-3 mb-3">
                 <img
                   src={tutor.photoUrl}
@@ -180,7 +380,9 @@ const MyTutorTable = ({ tutors }) => {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">📍 {tutor.location}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">🎓 {tutor.teachingMode}</p>
-              <p className="text-sm font-bold text-green-700 dark:text-green-400 mt-1">💵 ${tutor.hourlyFee} / session</p>
+              <p className="text-sm font-bold text-green-700 dark:text-green-400 mt-1">
+                💵 ${tutor.hourlyFee} / session
+              </p>
               <div className="flex gap-2 mt-3">
                 <Link href={`/tutors/${tutor._id}`} className="flex-1">
                   <button className="w-full px-3 py-2 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 transition">
@@ -209,7 +411,7 @@ const MyTutorTable = ({ tutors }) => {
       {deleteId && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setDeleteId(null)}
+          onClick={() => !deleteLoading && setDeleteId(null)}
         >
           <div
             className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4"
@@ -224,159 +426,31 @@ const MyTutorTable = ({ tutors }) => {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                disabled={deleteLoading}
+                className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-60"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 hover:bg-red-600 text-white transition"
+                disabled={deleteLoading}
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 hover:bg-red-600 text-white transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Yes, Delete
+                {deleteLoading ? "Deleting..." : "Yes, Delete"}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Update Modal */}
+      {/* ✅ Update Modal — key prop forces full remount on each tutor, fixing stale checkbox state */}
       {updateTutor && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setUpdateTutor(null)}
-        >
-          <div
-            className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4">
-              Update Tutor
-            </h2>
-
-            <form onSubmit={handleUpdateSubmit} className="space-y-3">
-              <input
-                name="tutorName"
-                defaultValue={updateTutor.tutorName}
-                placeholder="Tutor Name"
-                className={inputCls}
-                required
-              />
-              <input
-                name="photoUrl"
-                defaultValue={updateTutor.photoUrl}
-                placeholder="Photo URL"
-                className={inputCls}
-                required
-              />
-
-              <select name="subject" defaultValue={updateTutor.subject} className={selectCls} required>
-                <option value="">Select Subject</option>
-                <option value="mathematics">Mathematics</option>
-                <option value="physics">Physics</option>
-                <option value="chemistry">Chemistry</option>
-                <option value="biology">Biology</option>
-                <option value="english">English</option>
-                <option value="programming">Programming</option>
-                <option value="bangla">Bangla</option>
-                <option value="economics">Economics</option>
-              </select>
-
-              <div className="flex flex-wrap gap-3">
-                {DAYS.map((day) => (
-                  <label key={day} className="flex items-center gap-1 cursor-pointer text-sm dark:text-white">
-                    <input
-                      type="checkbox"
-                      name="availableDays"
-                      value={day}
-                      defaultChecked={updateTutor.availableDays?.includes(day)}
-                    />
-                    {day}
-                  </label>
-                ))}
-              </div>
-
-              <select name="timeSlot" defaultValue={updateTutor.timeSlot} className={selectCls} required>
-                <option value="">Select Time Slot</option>
-                <option>6:00 AM – 9:00 AM</option>
-                <option>9:00 AM – 12:00 PM</option>
-                <option>12:00 PM – 3:00 PM</option>
-                <option>3:00 PM – 6:00 PM</option>
-                <option>6:00 PM – 9:00 PM</option>
-              </select>
-
-              <input
-                type="number"
-                name="hourlyFee"
-                defaultValue={updateTutor.hourlyFee}
-                placeholder="Hourly Fee"
-                className={inputCls}
-                required
-              />
-              <input
-                type="number"
-                name="totalSlots"
-                defaultValue={updateTutor.totalSlots}
-                placeholder="Total Slots"
-                className={inputCls}
-                required
-              />
-
-              <div>
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  Session Start Date
-                </label>
-                <input
-                  type="date"
-                  name="startDate"
-                  defaultValue={updateTutor.startDate?.split("T")[0]}
-                  className={inputCls}
-                  required
-                />
-              </div>
-
-              <textarea
-                name="institutionExperience"
-                defaultValue={updateTutor.institutionExperience}
-                placeholder="Institution & Experience"
-                className={inputCls}
-                rows={3}
-                required
-              />
-
-              <input
-                name="location"
-                defaultValue={updateTutor.location}
-                placeholder="Location"
-                className={inputCls}
-                required
-              />
-
-              <select name="teachingMode" defaultValue={updateTutor.teachingMode} className={selectCls} required>
-                <option value="">Teaching Mode</option>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-                <option value="both">Both</option>
-              </select>
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setUpdateTutor(null)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={updateLoading}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 text-white transition disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {updateLoading ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <UpdateForm
+          key={updateTutor._id}
+          tutor={updateTutor}
+          onClose={() => setUpdateTutor(null)}
+          onSaved={handleSaved}
+        />
       )}
     </>
   );

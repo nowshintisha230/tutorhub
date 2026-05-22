@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import MyBookingsTable from "../components/MyBookingsTable";
 
-// ✅ Dynamic metadata
 export async function generateMetadata() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -21,10 +21,14 @@ const MyBookingPage = async () => {
     headers: await headers(),
   });
 
-  const user = session?.user;
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const user = session.user;
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/bookings/${user?.email}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/bookings/${user.email}`,
     { cache: "no-store" }
   );
 
@@ -33,7 +37,7 @@ const MyBookingPage = async () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">
-        {user?.name}'s Booked Sessions
+        {user.name}'s Booked Sessions
       </h1>
       <MyBookingsTable bookings={bookings} />
     </div>

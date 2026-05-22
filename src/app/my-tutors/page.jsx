@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import MyTutorTable from "../components/MyTutorTable";
 
-// ✅ Dynamic metadata
 export async function generateMetadata() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -21,7 +21,11 @@ const MyTutorPage = async () => {
     headers: await headers(),
   });
 
-  const user = session?.user;
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const user = session.user;
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/user/${user?.email}`,

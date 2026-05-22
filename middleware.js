@@ -1,4 +1,3 @@
-// middleware.js
 import { NextResponse } from 'next/server'
 
 const protectedRoutes = ['/add-tutor', '/my-tutors', '/my-bookings']

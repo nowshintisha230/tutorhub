@@ -26,8 +26,8 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    "/my-tutors/:path*",
-    "/add-tutor/:path*",
+    "/my-tutor/:path*",
+    "/add-tutor/:path*", 
     "/my-bookings/:path*",
   ],
 };

@@ -2,12 +2,12 @@
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 
-const LogInPage = () => {
+const LogInForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -196,6 +196,15 @@ const LogInPage = () => {
         </div>
       )}
     </div>
+  );
+};
+
+// ✅ Suspense wrapper
+const LogInPage = () => {
+  return (
+    <Suspense fallback={null}>
+      <LogInForm />
+    </Suspense>
   );
 };
 

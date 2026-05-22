@@ -21,5 +21,11 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/add-tutor', '/my-tutors/:path*', '/my-bookings/:path*'],
+  matcher: [
+    '/add-tutor',
+    '/my-tutors',
+    '/my-tutors/:path*',
+    '/my-bookings',
+    '/my-bookings/:path*',
+  ],
 }

@@ -10,9 +10,9 @@ export function middleware(request) {
   );
 
   if (isProtected) {
-    const sessionCookie =
-      request.cookies.get("better-auth.session_token") ??
-      request.cookies.get("__Secure-better-auth.session_token");
+    const sessionCookie = request.cookies.get(
+      "__Secure-better-auth.session_data"
+    );
 
     if (!sessionCookie) {
       const loginUrl = new URL("/login", request.url);
@@ -26,8 +26,8 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    "/my-tutor/:path*",
-    "/add-tutor/:path*", 
+    "/my-tutors/:path*",
+    "/add-tutor/:path*",
     "/my-bookings/:path*",
   ],
 };

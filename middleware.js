@@ -5,11 +5,16 @@ const protectedRoutes = ["/my-tutor", "/add-tutor", "/my-bookings"];
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
+  console.log("MIDDLEWARE RUNNING:", pathname);
+
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
   if (isProtected) {
+    const allCookies = request.cookies.getAll();
+    console.log("ALL COOKIES:", JSON.stringify(allCookies));
+
     const sessionCookie = request.cookies.get(
       "__Secure-better-auth.session_data"
     );
@@ -24,10 +29,7 @@ export function middleware(request) {
   return NextResponse.next();
 }
 
+
 export const config = {
-  matcher: [
-    "/my-tutors/:path*",
-    "/add-tutor/:path*",
-    "/my-bookings/:path*",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

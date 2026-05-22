@@ -1,35 +1,27 @@
+// middleware.js (root-এ)
 import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/my-tutors", "/add-tutor", "/my-bookings"];
+const protectedRoutes = ["/my-tutors", "/add-tutor"];
 
-export function middleware(request) {
-  const { pathname } = request.nextUrl;
-
-  console.log("MIDDLEWARE RUNNING:", pathname);
-
+export async function middleware(request) {
   const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    request.nextUrl.pathname.startsWith(route)
   );
 
-  if (isProtected) {
-    const allCookies = request.cookies.getAll();
-    console.log("ALL COOKIES:", JSON.stringify(allCookies));
+  if (!isProtected) return NextResponse.next();
 
-    const sessionCookie = request.cookies.get(
-      "__Secure-better-auth.session_data"
-    );
+  // better-auth cookie — "better-auth.session_token"
+  const sessionToken =
+    request.cookies.get("better-auth.session_token")?.value ||
+    request.cookies.get("__Secure-better-auth.session_token")?.value;
 
-    if (!sessionCookie) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (!sessionToken) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
 
-
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/my-tutors/:path*", "/add-tutor/:path*"],
 };

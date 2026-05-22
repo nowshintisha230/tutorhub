@@ -9,14 +9,11 @@ const DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
 const MyTutorTable = ({ tutors }) => {
   const [tutorData, setTutorData] = useState(tutors);
 
-  // Delete modal
   const [deleteId, setDeleteId] = useState(null);
 
-  // Update modal
   const [updateTutor, setUpdateTutor] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
 
-  // ── Delete ──────────────────────────────────────────
   const handleDelete = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tutor/${deleteId}`, {
       method: "DELETE",
@@ -31,7 +28,6 @@ const MyTutorTable = ({ tutors }) => {
     setDeleteId(null);
   };
 
-  // ── Update ──────────────────────────────────────────
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     setUpdateLoading(true);
@@ -79,9 +75,8 @@ const MyTutorTable = ({ tutors }) => {
   const inputCls =
     "border p-2 w-full bg-white dark:bg-zinc-800 text-black dark:text-white rounded text-sm";
   const selectCls =
-    "border p-2 w-full bg-white text-black rounded text-sm";
+    "border p-2 w-full bg-white dark:bg-zinc-800 text-black dark:text-white rounded text-sm";
 
-  // ── Empty state ─────────────────────────────────────
   if (tutorData.length === 0) {
     return (
       <div className="text-center py-20">
@@ -100,7 +95,7 @@ const MyTutorTable = ({ tutors }) => {
     <>
       <div className="w-full">
         {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto rounded-2xl shadow-md border border-gray-200">
+        <div className="hidden md:block overflow-x-auto rounded-2xl shadow-md border border-gray-200 dark:border-zinc-700">
           <table className="w-full text-sm text-left">
             <thead>
               <tr className="bg-green-600 text-white text-sm uppercase tracking-wide">
@@ -118,11 +113,13 @@ const MyTutorTable = ({ tutors }) => {
               {tutorData.map((tutor, index) => (
                 <tr
                   key={tutor._id}
-                  className={`border-b transition-colors duration-150 ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  } hover:bg-green-50`}
+                  className={`border-b dark:border-zinc-700 transition-colors duration-150 ${
+                    index % 2 === 0
+                      ? "bg-white dark:bg-zinc-900"
+                      : "bg-gray-50 dark:bg-zinc-800"
+                  } hover:bg-green-50 dark:hover:bg-zinc-700`}
                 >
-                  <td className="px-5 py-4 font-medium text-gray-500">{index + 1}</td>
+                  <td className="px-5 py-4 font-medium text-gray-500 dark:text-gray-400">{index + 1}</td>
                   <td className="px-5 py-4">
                     <img
                       src={tutor.photoUrl}
@@ -130,15 +127,15 @@ const MyTutorTable = ({ tutors }) => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   </td>
-                  <td className="px-5 py-4 font-semibold text-gray-800">{tutor.tutorName}</td>
-                  <td className="px-5 py-4 text-gray-700">{tutor.subject}</td>
-                  <td className="px-5 py-4 text-gray-500">{tutor.location}</td>
+                  <td className="px-5 py-4 font-semibold text-gray-800 dark:text-white">{tutor.tutorName}</td>
+                  <td className="px-5 py-4 text-gray-700 dark:text-gray-300">{tutor.subject}</td>
+                  <td className="px-5 py-4 text-gray-500 dark:text-gray-400">{tutor.location}</td>
                   <td className="px-5 py-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-300 capitalize">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-300 capitalize dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700">
                       {tutor.teachingMode}
                     </span>
                   </td>
-                  <td className="px-5 py-4 font-bold text-green-700">${tutor.hourlyFee}</td>
+                  <td className="px-5 py-4 font-bold text-green-700 dark:text-green-400">${tutor.hourlyFee}</td>
                   <td className="px-5 py-4 text-center">
                     <div className="flex justify-center gap-2">
                       <Link href={`/tutors/${tutor._id}`}>
@@ -169,7 +166,7 @@ const MyTutorTable = ({ tutors }) => {
         {/* Mobile Cards */}
         <div className="flex flex-col gap-4 md:hidden">
           {tutorData.map((tutor) => (
-            <div key={tutor._id} className="border rounded-xl p-4 shadow-sm bg-base-100">
+            <div key={tutor._id} className="border dark:border-zinc-700 rounded-xl p-4 shadow-sm bg-white dark:bg-zinc-900">
               <div className="flex items-center gap-3 mb-3">
                 <img
                   src={tutor.photoUrl}
@@ -177,13 +174,13 @@ const MyTutorTable = ({ tutors }) => {
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
-                  <p className="font-bold text-lg">{tutor.tutorName}</p>
-                  <p className="text-sm text-gray-500">{tutor.subject}</p>
+                  <p className="font-bold text-lg dark:text-white">{tutor.tutorName}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{tutor.subject}</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-500">📍 {tutor.location}</p>
-              <p className="text-sm text-gray-500">🎓 {tutor.teachingMode}</p>
-              <p className="text-sm font-bold text-green-700 mt-1">💵 ${tutor.hourlyFee} / session</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">📍 {tutor.location}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">🎓 {tutor.teachingMode}</p>
+              <p className="text-sm font-bold text-green-700 dark:text-green-400 mt-1">💵 ${tutor.hourlyFee} / session</p>
               <div className="flex gap-2 mt-3">
                 <Link href={`/tutors/${tutor._id}`} className="flex-1">
                   <button className="w-full px-3 py-2 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 transition">
@@ -208,7 +205,7 @@ const MyTutorTable = ({ tutors }) => {
         </div>
       </div>
 
-      {/* ── Delete Confirmation Modal ── */}
+      {/* Delete Confirmation Modal */}
       {deleteId && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -242,7 +239,7 @@ const MyTutorTable = ({ tutors }) => {
         </div>
       )}
 
-      {/* ── Update Modal ── */}
+      {/* Update Modal */}
       {updateTutor && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -286,7 +283,7 @@ const MyTutorTable = ({ tutors }) => {
 
               <div className="flex flex-wrap gap-3">
                 {DAYS.map((day) => (
-                  <label key={day} className="flex items-center gap-1 cursor-pointer text-sm">
+                  <label key={day} className="flex items-center gap-1 cursor-pointer text-sm dark:text-white">
                     <input
                       type="checkbox"
                       name="availableDays"

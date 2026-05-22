@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 
-export async function middleware(request) {
+export function middleware(request) {
   const protectedRoutes = ['/add-tutor', '/my-tutors', '/my-bookings']
 
   const isProtected = protectedRoutes.some((route) =>
@@ -10,11 +9,11 @@ export async function middleware(request) {
 
   if (!isProtected) return NextResponse.next()
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  })
+  const sessionToken =
+    request.cookies.get('better-auth.session_token')?.value ||
+    request.cookies.get('__Secure-better-auth.session_token')?.value
 
-  if (!session?.user) {
+  if (!sessionToken) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
